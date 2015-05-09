@@ -1,4 +1,4 @@
-var test = require('tap').test
+var test = require('tape')
 var spaces = require('level-spaces')
 var JustLoginCore = require('../index.js')
 var Levelup = require('level-mem')
@@ -13,11 +13,11 @@ test('test for unauthenticate', function(t) {
 	levelup = spaces(levelup, 'session')
 
 	t.plan(11)
-	
+
 	jlc.unauthenticate(fakeSessionId, function (err) { //not yet authenticated
 		t.notOk(err, 'no error')
 		t.type(err, "null", "error is null")
-	
+
 		levelup.put(fakeSessionId, fakeEmail, function (err) { //authenticate
 			t.notOk(err, 'no error')
 

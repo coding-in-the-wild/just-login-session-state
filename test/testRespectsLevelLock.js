@@ -29,8 +29,6 @@ test('isAuthenticated respects level-lock locks', function(t) {
 			})
 		})
 	})
-
-	t.end()
 })
 
 
@@ -56,6 +54,4 @@ test('unauthenticate respects level-lock locks', function(t) {
 			})
 		})
 	})
-
-	t.end()
 })

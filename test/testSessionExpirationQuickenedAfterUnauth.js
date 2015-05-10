@@ -10,7 +10,7 @@ var testWindowMs = 75 //must be larger than checkIntervalMs
 var fakeSessionId = 'whatever'
 var fakeContactAddress = 'example@example.com'
 
-test('test for authenticate', function (t) {
+test('session expires immediately for unauthenticate()', function (t) {
 	var jlc = JustLoginCore(new Levelup())
 	var sdb = init(jlc, {
 		sessionUnauthenticatedAfterMsInactivity: timeoutMs,

@@ -6,7 +6,7 @@ var init = require('./helpers/init.js')
 var fakeSessionId = "LOLThisIsAFakeSessionId"
 var fakeEmail = "example@example.com"
 
-test('test for unauthenticate', function(t) {
+test('unauthenticate works as expected', function(t) {
 	var jlc = JustLoginCore(new Levelup())
 	var sdb = init(jlc)
 

@@ -14,7 +14,7 @@ function dumbTokenGen() {
 	return fakeSecretToken
 }
 
-test('test for authenticate', function (t) {
+test('session expiration', function (t) {
 	var jlc = JustLoginCore(new Levelup())
 	var sdb = init(jlc, {
 		sessionUnauthenticatedAfterMsInactivity: timeoutMs,

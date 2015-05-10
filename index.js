@@ -3,7 +3,7 @@ var Expirer = require('expire-unused-keys')
 var spaces = require('level-spaces')
 var unauthenticate = require('./unauthenticate.js')
 var isAuthenticated = require('./isAuthenticated.js')
-var createNewSession = require('./isAuthenticated.js')
+var createNewSession = require('./createNewSession.js')
 
 var defaultOptions = {
 	sessionUnauthenticatedAfterMsInactivity: 7 * 24 * 60 * 60 * 1000, // 1 week
@@ -22,10 +22,12 @@ module.exports = function sessionState(core, db, opts) {
 	)
 	var authedSessionsDb = spaces(db, 'session')
 
-	core.on('authenticated', createNewSession(authedSessionsDb, expirer))
+	core.on('authenticated', createNewSession(authedSessionsDb, expirer, function (err, credentials) {
+		// um
+	}))
 
-	core.unauthenticate = unauthenticate(authedSessionsDb)
-	core.isAuthenticated = isAuthenticated(authedSessionsDb)
+	core.unauthenticate = unauthenticate(authedSessionsDb, expirer)
+	core.isAuthenticated = isAuthenticated(authedSessionsDb, expirer)
 
 	expirer.on('expire', core.unauthenticate)
 

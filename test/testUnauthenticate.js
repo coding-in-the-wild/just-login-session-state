@@ -1,36 +1,34 @@
 var test = require('tape')
-var spaces = require('level-spaces')
-var JustLoginCore = require('../index.js')
+var JustLoginCore = require('just-login-core')
 var Levelup = require('level-mem')
+var init = require('./helpers/init.js')
 
 var fakeSessionId = "LOLThisIsAFakeSessionId"
 var fakeEmail = "example@example.com"
 
 test('test for unauthenticate', function(t) {
-	var levelup = Levelup('newThang')
-	var jlc = JustLoginCore(levelup)
-
-	levelup = spaces(levelup, 'session')
+	var jlc = JustLoginCore(new Levelup())
+	var sdb = init(jlc)
 
 	t.plan(11)
 
 	jlc.unauthenticate(fakeSessionId, function (err) { //not yet authenticated
 		t.notOk(err, 'no error')
-		t.type(err, "null", "error is null")
+		t.equal(typeof err, 'null', 'error is null')
 
-		levelup.put(fakeSessionId, fakeEmail, function (err) { //authenticate
+		sdb.put(fakeSessionId, fakeEmail, function (err) { //authenticate
 			t.notOk(err, 'no error')
 
-			levelup.get(fakeSessionId, function (err, email) { //make sure 'put' worked
+			sdb.get(fakeSessionId, function (err, email) { //make sure 'put' worked
 				t.notOk(err, 'no error')
 				t.equal(email, fakeEmail, 'emails match')
 
 				jlc.unauthenticate(fakeSessionId, function (err) { //previously authenticated
 					t.notOk(err, 'no error')
 					t.notOk(err && err.notFound, 'no "not found" error')
-					t.type(err, "null", "error is null")
+					t.equal(typeof err, 'null', 'error is null')
 
-					levelup.get(fakeSessionId, function (err, email) { //make sure unauth worked
+					sdb.get(fakeSessionId, function (err, email) { //make sure unauth worked
 						t.ok(err, 'error')
 						t.ok(err && err.notFound, '"not found" error')
 						t.notOk(email, 'no email came back')

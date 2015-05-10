@@ -1,20 +1,15 @@
 var test = require('tape')
-var spaces = require('level-spaces')
-var JustLoginCore = require('../index.js')
+var JustLoginCore = require('just-login-core')
 var Levelup = require('level-mem')
+var init = require('./helpers/init.js')
 
 var fakeId = "LOLThisIsAFakeSessionId"
 var fakeAddress = "example@example.com"
 
-function init(core) {
-	var db = new Levelup()
-	JustLoginSessionState(core, db)
-	return spaces(db, 'session')
-}
-
 test('isAuthenticated works as expected', function(t) {
-	var jlc = JustLoginCore(new Levelup(), jlcOpts)
-	var db = init(jlc)
+	var jlc = JustLoginCore(new Levelup()) //, jlcOpts)
+	var sdb = init(jlc)
+	console.log(jlc)
 
 	t.plan(6)
 
@@ -22,7 +17,7 @@ test('isAuthenticated works as expected', function(t) {
 		t.notOk(err, 'no error')
 		t.notOk(value, 'not in db')
 
-		db.put(fakeId, fakeAddress, function (err) {
+		sdb.put(fakeId, fakeAddress, function (err) {
 			t.notOk(err, "no error")
 
 			jlc.isAuthenticated(fakeId, function(err, value) {

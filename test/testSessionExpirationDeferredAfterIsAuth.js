@@ -1,7 +1,7 @@
 var test = require('tape')
-var spaces = require('level-spaces')
-var JustLoginCore = require('../index.js')
+var JustLoginCore = require('just-login-core')
 var Levelup = require('level-mem')
+var init = require('./helpers/init.js')
 
 var touchAfterMs = 200 //must be smaller than timeoutMs
 var timeoutMs = 400
@@ -11,8 +11,8 @@ var fakeSessionId = 'whatever'
 var fakeContactAddress = 'example@example.com'
 
 test('test for authenticate', function (t) {
-	var db = Levelup('newThang')
-	var jlc = JustLoginCore(db, {
+	var jlc = JustLoginCore(new Levelup())
+	var sdb = init(jlc, {
 		sessionUnauthenticatedAfterMsInactivity: timeoutMs,
 		sessionTimeoutCheckIntervalMs: checkIntervalMs
 	})
@@ -40,7 +40,7 @@ test('test for authenticate', function (t) {
 	}, touchAfterMs)
 
 	setTimeout(function () {
-		db.get(fakeSessionId, function (err1, address1) {
+		sdb.get(fakeSessionId, function (err1, address1) {
 			t.notOk(err1, "no error in 1st db.get()")
 			t.notOk(err1 && err1.notFound, "no 'not found' error in 1st db.get()")
 			t.ok(address1, "address come back in 1st db.get()")
@@ -49,7 +49,7 @@ test('test for authenticate', function (t) {
 	}, touchAfterMs + timeoutMs - testWindowMs)
 
 	setTimeout(function () {
-		db.get(fakeSessionId, function (err2, address2) {
+		sdb.get(fakeSessionId, function (err2, address2) {
 			t.ok(err2, "error in 2nd db.get()")
 			t.ok(err2 && err2.notFound, "'not found' error in 2nd db.get()")
 			t.notOk(address2, "credentials don't come back in 2nd db.get()")

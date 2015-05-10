@@ -1,6 +1,6 @@
 var lock = require('level-lock')
 
-module.exports = function c(authedSessionsDb, expirer) {
+module.exports = function c(authedSessionsDb, expirer, cb) {
 	return function createNewSession(creds) {
 		var unlockSession = lock(authedSessionsDb, creds.sessionId, 'w')
 		if (!unlockSession) {

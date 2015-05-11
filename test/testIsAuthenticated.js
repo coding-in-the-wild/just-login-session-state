@@ -9,7 +9,6 @@ var fakeAddress = "example@example.com"
 test('isAuthenticated works as expected', function(t) {
 	var jlc = JustLoginCore(new Levelup()) //, jlcOpts)
 	var sdb = init(jlc)
-	console.log(jlc)
 
 	t.plan(6)
 

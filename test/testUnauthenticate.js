@@ -10,11 +10,10 @@ test('unauthenticate works as expected', function(t) {
 	var jlc = JustLoginCore(new Levelup())
 	var sdb = init(jlc)
 
-	t.plan(11)
+	t.plan(9)
 
 	jlc.unauthenticate(fakeSessionId, function (err) { //not yet authenticated
 		t.notOk(err, 'no error')
-		t.equal(typeof err, 'null', 'error is null')
 
 		sdb.put(fakeSessionId, fakeEmail, function (err) { //authenticate
 			t.notOk(err, 'no error')
@@ -26,7 +25,6 @@ test('unauthenticate works as expected', function(t) {
 				jlc.unauthenticate(fakeSessionId, function (err) { //previously authenticated
 					t.notOk(err, 'no error')
 					t.notOk(err && err.notFound, 'no "not found" error')
-					t.equal(typeof err, 'null', 'error is null')
 
 					sdb.get(fakeSessionId, function (err, email) { //make sure unauth worked
 						t.ok(err, 'error')

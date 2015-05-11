@@ -1,6 +1,8 @@
 just-login-session-state
 ===============
 
+[![Build Status](https://travis-ci.org/coding-in-the-wild/just-login-session-state.svg)](https://travis-ci.org/coding-in-the-wild/just-login-session-state)
+
 Handles session state for [just-login][jlc].
 
 # examples

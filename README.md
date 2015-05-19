@@ -24,7 +24,7 @@ sessionState(core, sessionDb)
 var sessionState = require('just-login-session-state')
 ```
 
-## `core = sessionState(core, db, options)`
+## `core = sessionState(core, db, [options])`
 
 - `core` is an instance of a [just-login-core][jlc].
 - `db` is expecting a levelup database.

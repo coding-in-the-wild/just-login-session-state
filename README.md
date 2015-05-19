@@ -5,7 +5,7 @@ just-login-session-state
 
 Handles session state for [just-login][jlc].
 
-# examples
+# example
 
 ```js
 var Core = require('just-login-core')
@@ -70,11 +70,7 @@ core.unauthenticate("thisIsAValidToken", function(err) {
 })
 ```
 
-## Events
-
-IF THIS EMITS EVENTS, SAY SO HERE
-
-## License
+# License
 
 [VOL](http://veryopenlicense.com/)
 

@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/artskydj/just-login-session-state.git"
+    "url": "https://github.com/coding-in-the-wild/just-login-session-state.git"
   },
   "devDependencies": {
     "just-login-core": "^2.0.0",

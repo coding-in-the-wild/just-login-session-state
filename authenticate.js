@@ -1,5 +1,6 @@
-module.exports = function c(authedSessionsDb, expirer, cb) {
-	return function createNewSession(creds) {
+module.exports = function a(authedSessionsDb, expirer, cb) {
+	if (!cb) cb = function () {}
+	return function authenticate(creds) {
 		authedSessionsDb.put(creds.sessionId, creds.contactAddress, function (err) {
 			if (err) {
 				cb(err)

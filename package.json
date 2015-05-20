@@ -17,17 +17,17 @@
     "type": "git",
     "url": "https://github.com/coding-in-the-wild/just-login-session-state.git"
   },
-  "devDependencies": {
-    "just-login-core": "^2.0.0",
-    "tape": "^4.0.0",
-    "level-mem": "^0.18.0"
-  },
   "scripts": {
     "test": "tape ./test/*.js"
   },
   "dependencies": {
     "expire-unused-keys": "^1.0.4",
     "level-spaces": "^2.0.0",
-    "xtend": "^4.0.0"
+    "random-uuid-v4": "0.0.4"
+  },
+  "devDependencies": {
+    "just-login-core": "^2.0.0",
+    "tape": "^4.0.0",
+    "level-mem": "^0.18.0"
   }
 }

@@ -43,11 +43,11 @@ Checks if a user is authenticated. (Logged in.)
 	- `contactAddress` is `null` is the user is not authenticated, and is a string of their contact address if they are authenticated.
 
 ```js
-core.isAuthenticated("whatever the session id is", function(err, contactAddress) {
+core.isAuthenticated('whatever the session id is', function(err, contactAddress) {
 	if (!err) {
 		console.log(contactAddress)
-		//if not logged in, logs "null"
-		//if logged in, logs: "fake@example.com"
+		//if not logged in, logs 'null'
+		//if logged in, logs: 'fake@example.com'
 	}
 })
 ```
@@ -61,12 +61,36 @@ Sets the appropriate session id to be unauthenticated.
 	- `err` is `null` if there was no error, and is an `Error` object if there was an error.
 
 ```js
-core.unauthenticate("thisIsAValidToken", function(err) {
-	if (err) {
-		console.log("error:", err.message) //this is expected for invalid tokens (not previously logged in)
-	} else {
-		console.log("you have been logged out") //this is expected for valid tokens (previously logged in)
-	}
+core.unauthenticate('session', function(err) {
+	console.log(err ? err.message : 'you have been logged out')
+})
+```
+
+## `core.createSession(cb)`
+
+Creates an unauthenticated session.
+
+- `cb` is a function that has the following arguments:
+	- `err` is `null` if there was no error, and is an `Error` object if there was an error.
+	- `sessionId` is a string of the session id.
+
+```js
+core.createSession(function(err, sessionId) {
+	console.log(err ? err.message : 'session created, not logged in though')
+})
+```
+
+## `core.continueSession(sessionId, [cb])`
+
+Continues a previous session, if possible. If it is not possible (e.g. logged out manually, or session timed out), it calls back with an error.
+
+- `sessionId` is a string of the session id that is trying to get authenticated.
+- `cb` is an optional function that defaults to a no-op. It has the following argument:
+	- `err` is `null` if there was no error, and is an `Error` object if there was an error.
+
+```js
+core.continueSession('session', function(err) {
+	console.log(err ? err.message : 'continued session!')
 })
 ```
 

@@ -7,7 +7,7 @@ var fakeId = "LOLThisIsAFakeSessionId"
 var fakeAddress = "example@example.com"
 
 test('isAuthenticated works as expected', function(t) {
-	var jlc = JustLoginCore(new Levelup()) //, jlcOpts)
+	var jlc = JustLoginCore(new Levelup())
 	var sdb = init(jlc)
 
 	t.plan(6)

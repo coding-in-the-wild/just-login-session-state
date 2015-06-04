@@ -23,7 +23,8 @@
   "dependencies": {
     "expire-unused-keys": "^1.0.4",
     "level-spaces": "^2.0.0",
-    "random-uuid-v4": "0.0.4"
+    "random-uuid-v4": "0.0.4",
+    "safe-json-parse": "^4.0.0"
   },
   "devDependencies": {
     "just-login-core": "^2.0.0",

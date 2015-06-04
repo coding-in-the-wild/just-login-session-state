@@ -80,20 +80,6 @@ core.createSession(function(err, sessionId) {
 })
 ```
 
-## `core.continueSession(sessionId, [cb])`
-
-Continues a previous session, if possible. If it is not possible (e.g. logged out manually, or session timed out), it calls back with an error.
-
-- `sessionId` is a string of the session id that is trying to get authenticated.
-- `cb` is an optional function that defaults to a no-op. It has the following argument:
-	- `err` is `null` if there was no error, and is an `Error` object if there was an error.
-
-```js
-core.continueSession('session', function(err) {
-	console.log(err ? err.message : 'continued session!')
-})
-```
-
 # License
 
 [VOL](http://veryopenlicense.com/)

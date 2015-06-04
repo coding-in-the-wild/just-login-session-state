@@ -2,7 +2,6 @@ var Expirer = require('expire-unused-keys')
 var spaces = require('level-spaces')
 var authenticate = require('./lib/authenticate.js')
 var createSession = require('./lib/createSession.js')
-var continueSession = require('./lib/continueSession.js')
 var unauthenticate = require('./lib/unauthenticate.js')
 var isAuthenticated = require('./lib/isAuthenticated.js')
 
@@ -23,7 +22,6 @@ module.exports = function sessionState(core, db, opts) {
 
 	core.on('authenticated', authenticate(authedSessionsDb, expirer))
 	core.createSession = createSession(authedSessionsDb, expirer)
-	core.continueSession = continueSession(authedSessionsDb, expirer)
 	core.unauthenticate = unauthenticate(authedSessionsDb, expirer)
 	core.isAuthenticated = isAuthenticated(authedSessionsDb, expirer)
 

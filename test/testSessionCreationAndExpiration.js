@@ -6,7 +6,7 @@ var init = require('./helpers/init.js')
 test('session creation and continuation', function(t) {
 	t.plan(5)
 	var jlc = JustLoginCore(new Levelup())
-	init(jlc, false, 100, 10)
+	init(jlc, false, 400, 100)
 
 	jlc.createSession(function (err, sid1) {
 		t.notOk(err, err ? err.message : 'successful session creation')
@@ -20,8 +20,8 @@ test('session creation and continuation', function(t) {
 						t.notOk(createdAt, 'unsuccessful, session id expired')
 						t.end()
 					})
-				}, 120)
+				}, 520)
 			})
-		}, 80)
+		}, 300)
 	})
 })

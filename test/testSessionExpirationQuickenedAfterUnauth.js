@@ -3,10 +3,10 @@ var JustLoginCore = require('just-login-core')
 var Levelup = require('level-mem')
 var init = require('./helpers/init.js')
 
-var forgetAfterMs = 200 //must be smaller than (timeoutMs + testWindowMs)
-var timeoutMs = 300
-var checkIntervalMs = 50
-var testWindowMs = 75 //must be larger than checkIntervalMs
+var forgetAfterMs = 300 //must be smaller than (timeoutMs + testWindowMs)
+var timeoutMs = 500
+var checkIntervalMs = 80
+var testWindowMs = 100 //must be larger than checkIntervalMs
 var fakeSessionId = 'whatever'
 var fakeContactAddress = 'example@example.com'
 

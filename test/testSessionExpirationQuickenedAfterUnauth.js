@@ -12,10 +12,7 @@ var fakeContactAddress = 'example@example.com'
 
 test('session expires immediately for unauthenticate()', function (t) {
 	var jlc = JustLoginCore(new Levelup())
-	var sdb = init(jlc, {
-		sessionUnauthenticatedAfterMsInactivity: timeoutMs,
-		sessionTimeoutCheckIntervalMs: checkIntervalMs
-	})
+	var asdb = init(jlc, true, timeoutMs, checkIntervalMs)
 
 	jlc.beginAuthentication(fakeSessionId, fakeContactAddress, function (err, credentials) {
 		t.notOk(err, "no error in beginAuth()")
@@ -33,7 +30,7 @@ test('session expires immediately for unauthenticate()', function (t) {
 	})
 
 	setTimeout(function () { //Check if authenticated (true)
-		sdb.get(fakeSessionId, function (err1, address1) {
+		asdb.get(fakeSessionId, function (err1, address1) {
 			t.notOk(err1, "no error in 1st db.get()")
 			t.notOk(err1 && err1.notFound, "no 'not found' error in 1st db.get()")
 			t.ok(address1, "address come back in 1st db.get()")
@@ -48,7 +45,7 @@ test('session expires immediately for unauthenticate()', function (t) {
 	}, forgetAfterMs)
 
 	setTimeout(function () { //Check if authenticated (false)
-		sdb.get(fakeSessionId, function (err2, address2) {
+		asdb.get(fakeSessionId, function (err2, address2) {
 			t.ok(err2, "error in 2nd db.get()")
 			t.ok(err2 && err2.notFound, "'not found' error in 2nd db.get()")
 			t.notOk(address2, "credentials don't come back in 2nd db.get()")

@@ -16,10 +16,7 @@ function dumbTokenGen() {
 
 test('session expiration', function (t) {
 	var jlc = JustLoginCore(new Levelup())
-	var sdb = init(jlc, {
-		sessionUnauthenticatedAfterMsInactivity: timeoutMs,
-		sessionTimeoutCheckIntervalMs: checkIntervalMs
-	})
+	var asdb = init(jlc, true, timeoutMs, checkIntervalMs)
 
 	jlc.beginAuthentication(fakeSessionId, fakeContactAddress, function (err, credentials) {
 		t.notOk(err, "no error in beginAuth()")
@@ -36,8 +33,8 @@ test('session expiration', function (t) {
 	})
 
 	setTimeout(function () {
-		sdb.get(fakeSessionId, function (err1, address1) {
-			t.notOk(err1, "no error in 1st db.get()")
+		asdb.get(fakeSessionId, function (err1, address1) {
+			t.notOk(err1, "no error in 1st db.get()" + (err1 ? err1.message : ''))
 			t.notOk(err1 && err1.notFound, "no 'not found' error in 1st db.get()")
 			t.ok(address1, "address come back in 1st db.get()")
 			t.equal(address1, fakeContactAddress, "address are correct in 1st db.get()")
@@ -45,7 +42,7 @@ test('session expiration', function (t) {
 	}, timeoutMs - testWindowMs)
 
 	setTimeout(function () {
-		sdb.get(fakeSecretToken, function (err2, address2) {
+		asdb.get(fakeSecretToken, function (err2, address2) {
 			t.ok(err2, "error in 2nd db.get()")
 			t.ok(err2 && err2.notFound, "'not found' error in 2nd db.get()")
 			t.notOk(address2, "credentials don't come back in 2nd db.get()")

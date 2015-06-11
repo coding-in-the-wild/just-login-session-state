@@ -29,9 +29,49 @@ var sessionState = require('just-login-session-state')
 - `core` is an instance of a [just-login-core][jlc].
 - `db` is expecting a levelup database.
 - `options` is an optional object:
-	- `sessionUnauthenticatedAfterMsInactivity` is a number in milliseconds of a session's period of inactivity before they are unauthenticated. If the user does not call `isAuthenticated()` within that time period, thy will be unauthenticated. (Logged out.) Defaults to 1 week.
-	- `sessionTimeoutCheckIntervalMs` is a number in milliseconds of the session's timeout's check interval. (See [expireUnusedKeys({checkIntervalMs})][checkint].) Defaults to 10 seconds.
+	- `unauthenticatedAfterMs` is a number in milliseconds of a session's period of inactivity before they are unauthenticated. (Calling `authenticate()`/`isAuthenticated()` counts as activity.)  Defaults to 1 week.
+	- `deleteSessionAfterMs` is a number in milliseconds of a session's period of inactivity before the session is deleted. If the user does not call `isAuthenticated()` within that time period, their session will be deleted. Defaults to 1 week.
+	- `checkIntervalMs` is a number in milliseconds of the session's timeout's check interval. (See [expireUnusedKeys({checkIntervalMs})](https://github.com/TehShrike/expire-unused-keys#timeoutms-db-checkintervalms).) Defaults to 10 seconds.
 - Returns the modified `core`.
+
+## `core.createSession(cb)`
+
+Creates a new (unauthenticated) session.
+
+- `cb` is a function that has the following arguments:
+	- `err` is `null` or an `Error` object.
+	- `sessionId` is a string of the new session id.
+
+```js
+core.createSession(function(err, sessionId) {
+	console.log(err ? err.message : 'session created, not logged in though')
+})
+```
+
+## `core.sessionExists(sessionId, cb)`
+
+- `sessionId` is a string of the session id for which to check the existence.
+- `cb` is a function that has the following arguments:
+	- `err` is `null` or an `Error` object.
+	- `date` is `null` if the session does not exist, otherwise it is a `date` object.
+
+```js
+core.createSession(function(err, sessionId) {
+	console.log(err ? err.message : 'session created, not logged in though')
+})
+```
+
+## `core.deleteSession(sessionId, [cb])`
+
+- `sessionId` is a string of the session id to delete.
+- `cb` is an optional function that has the following argument:
+	- `err` is `null` or an `Error` object.
+
+```js
+core.createSession(function(err, sessionId) {
+	console.log(err ? err.message : 'session created, not logged in though')
+})
+```
 
 ## `core.isAuthenticated(sessionId, cb)`
 
@@ -39,8 +79,8 @@ Checks if a user is authenticated. (Logged in.)
 
 - `sessionId` is a string of the session id in question.
 - `cb` is a function with the following arguments:
-	- `err` is `null` if there was no error, and is an `Error` object if there was an error.
-	- `contactAddress` is `null` is the user is not authenticated, and is a string of their contact address if they are authenticated.
+	- `err` is `null` or an `Error` object.
+	- `contactAddress` is `null` is the user is not authenticated, otherwise it is a string of their contact address.
 
 ```js
 core.isAuthenticated('whatever the session id is', function(err, contactAddress) {
@@ -57,26 +97,12 @@ core.isAuthenticated('whatever the session id is', function(err, contactAddress)
 Sets the appropriate session id to be unauthenticated.
 
 - `sessionId` is a string of the session id that is trying to get authenticated.
-- `cb` is an optional function that defaults to a no-op. It has the following argument:
-	- `err` is `null` if there was no error, and is an `Error` object if there was an error.
+- `cb` is an optional function with the following argument:
+	- `err` is `null` or an `Error` object.
 
 ```js
 core.unauthenticate('session', function(err) {
 	console.log(err ? err.message : 'you have been logged out')
-})
-```
-
-## `core.createSession(cb)`
-
-Creates an unauthenticated session.
-
-- `cb` is a function that has the following arguments:
-	- `err` is `null` if there was no error, and is an `Error` object if there was an error.
-	- `sessionId` is a string of the session id.
-
-```js
-core.createSession(function(err, sessionId) {
-	console.log(err ? err.message : 'session created, not logged in though')
 })
 ```
 

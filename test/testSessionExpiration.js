@@ -1,6 +1,4 @@
 var test = require('tape')
-var JustLoginCore = require('just-login-core')
-var Levelup = require('level-mem')
 var init = require('./helpers/init.js')
 
 var timeoutMs = 300
@@ -15,8 +13,9 @@ function dumbTokenGen() {
 }
 
 test('session expiration', function (t) {
-	var jlc = JustLoginCore(new Levelup())
-	var asdb = init(jlc, true, timeoutMs, checkIntervalMs)
+	var initialState = init(timeoutMs, checkIntervalMs)
+	var asdb = initialState.authedSessionsDb
+	var jlc = initialState.core
 
 	jlc.beginAuthentication(fakeSessionId, fakeContactAddress, function (err, credentials) {
 		t.notOk(err, "no error in beginAuth()")

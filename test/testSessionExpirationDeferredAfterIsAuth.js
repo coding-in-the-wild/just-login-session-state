@@ -1,6 +1,4 @@
 var test = require('tape')
-var JustLoginCore = require('just-login-core')
-var Levelup = require('level-mem')
 var init = require('./helpers/init.js')
 
 var touchAfterMs = 300 //must be smaller than timeoutMs
@@ -11,8 +9,10 @@ var fakeSessionId = 'whatever'
 var fakeContactAddress = 'example@example.com'
 
 test('session expiration delayed after isAuthenticated()', function (t) {
-	var jlc = JustLoginCore(new Levelup())
-	var asdb = init(jlc, true, timeoutMs, checkIntervalMs)
+	var initialState = init(timeoutMs, checkIntervalMs)
+	var asdb = initialState.authedSessionsDb
+	var jlc = initialState.core
+	var ss = initialState.sessionState
 
 	jlc.beginAuthentication(fakeSessionId, fakeContactAddress, function (err, credentials) {
 		t.notOk(err, "no error in beginAuth()")
@@ -29,7 +29,7 @@ test('session expiration delayed after isAuthenticated()', function (t) {
 	})
 
 	setTimeout(function () {
-		jlc.isAuthenticated(fakeSessionId, function (err, contactAddress) {
+		ss.isAuthenticated(fakeSessionId, function (err, contactAddress) {
 			t.notOk(err, "no error")
 			t.ok(contactAddress, "contactAddress came back")
 			t.equal(contactAddress, fakeContactAddress, "contactAddress is correct")

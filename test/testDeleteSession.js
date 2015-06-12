@@ -1,18 +1,17 @@
 var test = require('tape')
-var JustLoginCore = require('just-login-core')
-var Levelup = require('level-mem')
 var init = require('./helpers/init.js')
 
 var sessionId = "LOLThisIsAFakeSessionId"
 var now = String(new Date().getTime())
 
 test('deleteSession works as expected', function(t) {
-	var jlc = JustLoginCore(new Levelup())
-	var sdb = init(jlc, false)
+	var initialState = init()
+	var ss = initialState.sessionState
+	var sdb = initialState.sessionsDb
 
 	t.plan(9)
 
-	jlc.deleteSession(sessionId, function (err) { //not yet authenticated
+	ss.deleteSession(sessionId, function (err) { //not yet authenticated
 		t.notOk(err, 'no error')
 
 		sdb.put(sessionId, now, function (err) { //authenticate
@@ -22,7 +21,7 @@ test('deleteSession works as expected', function(t) {
 				t.notOk(err, 'no error')
 				t.equal(time, now, 'times match')
 
-				jlc.deleteSession(sessionId, function (err) { //previously authenticated
+				ss.deleteSession(sessionId, function (err) { //previously authenticated
 					t.notOk(err, 'no error')
 					t.notOk(err && err.notFound, 'no "not found" error')
 

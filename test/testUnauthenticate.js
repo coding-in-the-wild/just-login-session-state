@@ -7,12 +7,13 @@ var fakeSessionId = "LOLThisIsAFakeSessionId"
 var now = String(new Date().getTime())
 
 test('unauthenticate works as expected', function(t) {
-	var jlc = JustLoginCore(new Levelup())
-	var asdb = init(jlc, true)
+	var initialState = init()
+	var ss = initialState.sessionState
+	var asdb = initialState.authedSessionsDb
 
 	t.plan(9)
 
-	jlc.unauthenticate(fakeSessionId, function (err) { //not yet authenticated
+	ss.unauthenticate(fakeSessionId, function (err) { //not yet authenticated
 		t.notOk(err, 'no error')
 
 		asdb.put(fakeSessionId, now, function (err) { //authenticate
@@ -22,7 +23,7 @@ test('unauthenticate works as expected', function(t) {
 				t.notOk(err, 'no error')
 				t.equal(time, now, 'times match')
 
-				jlc.unauthenticate(fakeSessionId, function (err) { //previously authenticated
+				ss.unauthenticate(fakeSessionId, function (err) { //previously authenticated
 					t.notOk(err, 'no error')
 					t.notOk(err && err.notFound, 'no "not found" error')
 

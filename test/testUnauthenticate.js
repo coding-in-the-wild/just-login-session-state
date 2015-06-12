@@ -1,6 +1,4 @@
 var test = require('tape')
-var JustLoginCore = require('just-login-core')
-var Levelup = require('level-mem')
 var init = require('./helpers/init.js')
 
 var fakeSessionId = "LOLThisIsAFakeSessionId"

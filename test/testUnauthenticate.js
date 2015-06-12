@@ -1,35 +1,34 @@
 var test = require('tape')
-var JustLoginCore = require('just-login-core')
-var Levelup = require('level-mem')
 var init = require('./helpers/init.js')
 
 var fakeSessionId = "LOLThisIsAFakeSessionId"
-var fakeEmail = "example@example.com"
+var now = String(new Date().getTime())
 
 test('unauthenticate works as expected', function(t) {
-	var jlc = JustLoginCore(new Levelup())
-	var sdb = init(jlc)
+	var initialState = init()
+	var ss = initialState.sessionState
+	var asdb = initialState.authedSessionsDb
 
 	t.plan(9)
 
-	jlc.unauthenticate(fakeSessionId, function (err) { //not yet authenticated
+	ss.unauthenticate(fakeSessionId, function (err) { //not yet authenticated
 		t.notOk(err, 'no error')
 
-		sdb.put(fakeSessionId, fakeEmail, function (err) { //authenticate
+		asdb.put(fakeSessionId, now, function (err) { //authenticate
 			t.notOk(err, 'no error')
 
-			sdb.get(fakeSessionId, function (err, email) { //make sure 'put' worked
+			asdb.get(fakeSessionId, function (err, time) { //make sure 'put' worked
 				t.notOk(err, 'no error')
-				t.equal(email, fakeEmail, 'emails match')
+				t.equal(time, now, 'times match')
 
-				jlc.unauthenticate(fakeSessionId, function (err) { //previously authenticated
+				ss.unauthenticate(fakeSessionId, function (err) { //previously authenticated
 					t.notOk(err, 'no error')
 					t.notOk(err && err.notFound, 'no "not found" error')
 
-					sdb.get(fakeSessionId, function (err, email) { //make sure unauth worked
+					asdb.get(fakeSessionId, function (err, time) { //make sure unauth worked
 						t.ok(err, 'error')
 						t.ok(err && err.notFound, '"not found" error')
-						t.notOk(email, 'no email came back')
+						t.notOk(time, 'no time came back, DONE')
 						t.end()
 					})
 				})

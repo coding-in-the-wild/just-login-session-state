@@ -1,33 +1,44 @@
-var xtend = require('xtend')
 var Expirer = require('expire-unused-keys')
 var spaces = require('level-spaces')
-var unauthenticate = require('./unauthenticate.js')
-var isAuthenticated = require('./isAuthenticated.js')
-var authenticate = require('./authenticate.js')
+var authenticate = require('./lib/authenticate.js')
+var createSession = require('./lib/createSession.js')
+var deleteSession = require('./lib/deleteSession.js')
+var sessionExists = require('./lib/sessionExists.js')
+var unauthenticate = require('./lib/unauthenticate.js')
+var isAuthenticated = require('./lib/isAuthenticated.js')
 
-var defaultOptions = {
-	sessionUnauthenticatedAfterMsInactivity: 7 * 24 * 60 * 60 * 1000, // 1 week
-	sessionTimeoutCheckIntervalMs: 10 * 1000 // 10 sec
-}
+var defaultInactivity = 7 * 24 * 60 * 60 * 1000 // 1 week
+var defaultInterval = 10 * 1000 // 10 sec
 
-module.exports = function sessionState(core, db, opts) {
+module.exports = function SessionState(core, db, opts) {
 	if (!core) throw new Error('Expected a just-login-core instance')
 	if (!db) throw new Error('Expected a levelup database')
-	var options = xtend(defaultOptions, opts)
+	if (!opts) opts = {}
 
-	var expirer = new Expirer(
-		options.sessionUnauthenticatedAfterMsInactivity,
-		spaces(db, 'session-expiration'),
-		options.sessionTimeoutCheckIntervalMs
+	var authedSessionsExpirer = new Expirer(
+		opts.unauthenticateAfterMs || defaultInactivity,
+		spaces(db, 'authed-session-expiration'),
+		opts.checkIntervalMs || defaultInterval
 	)
-	var authedSessionsDb = spaces(db, 'session')
+	var sessionsExpirer = new Expirer(
+		opts.deleteSessionAfterMs || defaultInactivity,
+		spaces(db, 'session-expiration'),
+		opts.checkIntervalMs || defaultInterval
+	)
+	var authedSessionsDb = spaces(db, 'authed-sessions')
+	var sessionsDb = spaces(db, 'sessions')
 
-	core.on('authenticated', authenticate(authedSessionsDb, expirer))
+	var sessionState = {
+		createSession: createSession(sessionsDb, sessionsExpirer),
+		deleteSession: deleteSession(sessionsDb, sessionsExpirer),
+		sessionExists: sessionExists(sessionsDb, sessionsExpirer),
+		unauthenticate: unauthenticate(authedSessionsDb, authedSessionsExpirer, sessionsExpirer),
+		isAuthenticated: isAuthenticated(authedSessionsDb, authedSessionsExpirer, sessionsExpirer)
+	}
 
-	core.unauthenticate = unauthenticate(authedSessionsDb, expirer)
-	core.isAuthenticated = isAuthenticated(authedSessionsDb, expirer)
+	core.on('authenticated', authenticate(authedSessionsDb, authedSessionsExpirer, sessionsExpirer))
+	authedSessionsExpirer.on('expire', unauthenticate(authedSessionsDb, authedSessionsExpirer))
+	sessionsExpirer.on('expire', sessionState.deleteSession)
 
-	expirer.on('expire', core.unauthenticate)
-
-	return core
+	return sessionState
 }

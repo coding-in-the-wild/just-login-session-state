@@ -1,21 +1,18 @@
 var test = require('tape')
-var JustLoginCore = require('just-login-core')
-var Levelup = require('level-mem')
 var init = require('./helpers/init.js')
 
-var touchAfterMs = 200 //must be smaller than timeoutMs
-var timeoutMs = 400
-var checkIntervalMs = 50
-var testWindowMs = 75 //must be larger than checkIntervalMs
+var touchAfterMs = 300 //must be smaller than timeoutMs
+var timeoutMs = 500
+var checkIntervalMs = 80
+var testWindowMs = 100 //must be larger than checkIntervalMs
 var fakeSessionId = 'whatever'
 var fakeContactAddress = 'example@example.com'
 
 test('session expiration delayed after isAuthenticated()', function (t) {
-	var jlc = JustLoginCore(new Levelup())
-	var sdb = init(jlc, {
-		sessionUnauthenticatedAfterMsInactivity: timeoutMs,
-		sessionTimeoutCheckIntervalMs: checkIntervalMs
-	})
+	var initialState = init(timeoutMs, checkIntervalMs)
+	var asdb = initialState.authedSessionsDb
+	var jlc = initialState.core
+	var ss = initialState.sessionState
 
 	jlc.beginAuthentication(fakeSessionId, fakeContactAddress, function (err, credentials) {
 		t.notOk(err, "no error in beginAuth()")
@@ -32,7 +29,7 @@ test('session expiration delayed after isAuthenticated()', function (t) {
 	})
 
 	setTimeout(function () {
-		jlc.isAuthenticated(fakeSessionId, function (err, contactAddress) {
+		ss.isAuthenticated(fakeSessionId, function (err, contactAddress) {
 			t.notOk(err, "no error")
 			t.ok(contactAddress, "contactAddress came back")
 			t.equal(contactAddress, fakeContactAddress, "contactAddress is correct")
@@ -40,7 +37,7 @@ test('session expiration delayed after isAuthenticated()', function (t) {
 	}, touchAfterMs)
 
 	setTimeout(function () {
-		sdb.get(fakeSessionId, function (err1, address1) {
+		asdb.get(fakeSessionId, function (err1, address1) {
 			t.notOk(err1, "no error in 1st db.get()")
 			t.notOk(err1 && err1.notFound, "no 'not found' error in 1st db.get()")
 			t.ok(address1, "address come back in 1st db.get()")
@@ -49,7 +46,7 @@ test('session expiration delayed after isAuthenticated()', function (t) {
 	}, touchAfterMs + timeoutMs - testWindowMs)
 
 	setTimeout(function () {
-		sdb.get(fakeSessionId, function (err2, address2) {
+		asdb.get(fakeSessionId, function (err2, address2) {
 			t.ok(err2, "error in 2nd db.get()")
 			t.ok(err2 && err2.notFound, "'not found' error in 2nd db.get()")
 			t.notOk(address2, "credentials don't come back in 2nd db.get()")

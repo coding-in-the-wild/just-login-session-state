@@ -32,7 +32,7 @@ var SessionState = require('just-login-session-state')
 	- `unauthenticatedAfterMs` is a number in milliseconds of a session's period of inactivity before they are unauthenticated. (Calling `authenticate()`/`isAuthenticated()` counts as activity.)  Defaults to 1 week.
 	- `deleteSessionAfterMs` is a number in milliseconds of a session's period of inactivity before the session is deleted. If the user does not call `isAuthenticated()` within that time period, their session will be deleted. Defaults to 1 week.
 	- `checkIntervalMs` is a number in milliseconds of the session's timeout's check interval. (See [expireUnusedKeys({checkIntervalMs})](https://github.com/TehShrike/expire-unused-keys#timeoutms-db-checkintervalms).) Defaults to 10 seconds.
-- Returns the modified `core`.
+- Returns `sessionState`.
 
 ## `sessionState.createSession(cb)`
 

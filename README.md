@@ -44,7 +44,11 @@ Creates a new (unauthenticated) session.
 
 ```js
 sessionState.createSession(function(err, sessionId) {
-	console.log(err ? err.message : 'session created, not logged in though')
+	if (err) {
+		console.error(err)
+	} else {
+		console.log('session created, but you\'re not logged in')
+	}
 })
 ```
 
@@ -56,8 +60,14 @@ sessionState.createSession(function(err, sessionId) {
 	- `date` is `null` if the session does not exist, otherwise it is a `date` object.
 
 ```js
-sessionState.createSession(function(err, sessionId) {
-	console.log(err ? err.message : 'session created, not logged in though')
+sessionState.sessionExists('64416534-3199-11e5-96bb-ba029ef54746', function(err, date) {
+	if (err) {
+		console.error(err)
+	} else if (date) {
+		console.log('The session exists, and was created at ' + new Date(date))
+	} else {
+		console.log('The session does not exist')
+	}
 })
 ```
 
@@ -68,8 +78,12 @@ sessionState.createSession(function(err, sessionId) {
 	- `err` is `null` or an `Error` object.
 
 ```js
-sessionState.createSession(function(err, sessionId) {
-	console.log(err ? err.message : 'session created, not logged in though')
+sessionState.deleteSession('64416534-3199-11e5-96bb-ba029ef54746', function(err) {
+	if (err) {
+		console.error(err)
+	} else {
+		console.log('Session was deleted')
+	}
 })
 ```
 
@@ -83,26 +97,32 @@ Checks if a user is authenticated. (Logged in.)
 	- `contactAddress` is `null` is the user is not authenticated, otherwise it is a string of their contact address.
 
 ```js
-sessionState.isAuthenticated('whatever the session id is', function(err, contactAddress) {
-	if (!err) {
-		console.log(contactAddress)
-		//if not logged in, logs 'null'
-		//if logged in, logs: 'fake@example.com'
+sessionState.isAuthenticated('64416534-3199-11e5-96bb-ba029ef54746', function(err, contactAddress) {
+	if (err) {
+		console.error(err)
+	} else if (contactAddress) {
+		console.log('You are logged in')
+	} else {
+		console.log('You are not logged in')
 	}
 })
 ```
 
 ## `sessionState.unauthenticate(sessionId, [cb])`
 
-Sets the appropriate session id to be unauthenticated.
+Sets the session id to be unauthenticated.
 
 - `sessionId` is a string of the session id that is trying to get authenticated.
 - `cb` is an optional function with the following argument:
 	- `err` is `null` or an `Error` object.
 
 ```js
-sessionState.unauthenticate('session', function(err) {
-	console.log(err ? err.message : 'you have been logged out')
+sessionState.unauthenticate('64416534-3199-11e5-96bb-ba029ef54746', function(err) {
+	if (err) {
+		console.error(err)
+	} else {
+		console.log('You have been logged out')
+	}
 })
 ```
 

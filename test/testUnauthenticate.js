@@ -1,34 +1,44 @@
 var test = require('tape')
 var init = require('./helpers/init.js')
 
-var fakeSessionId = "LOLThisIsAFakeSessionId"
-var now = String(new Date().getTime())
+test('unauthenticating a session id that does not exist is ok', function (t) {
+	t.plan(1)
 
-test('unauthenticate works as expected', function(t) {
+	init().sessionState.unauthenticate('DOES NOT EXIST', function (err) {
+		t.ifError(err)
+		t.end()
+	})
+})
+
+test('unauthenticate() does not delete the current session', function(t) {
+	var sessionId = 'whatever'
+	var contactAddress = 'person@email.com'
+	var now = new Date().getTime().toString()
+
 	var initialState = init()
 	var ss = initialState.sessionState
 	var asdb = initialState.authedSessionsDb
+	var sdb = initialState.sessionsDb
 
-	t.plan(9)
+	t.plan(7)
 
-	ss.unauthenticate(fakeSessionId, function (err) { //not yet authenticated
-		t.notOk(err, 'no error')
+	sdb.put(sessionId, now, function (err) {
+		t.ifError(err)
 
-		asdb.put(fakeSessionId, now, function (err) { //authenticate
-			t.notOk(err, 'no error')
+		asdb.put(sessionId, contactAddress, function (err) { //authenticate
+			t.ifError(err)
 
-			asdb.get(fakeSessionId, function (err, time) { //make sure 'put' worked
-				t.notOk(err, 'no error')
-				t.equal(time, now, 'times match')
+			ss.unauthenticate(sessionId, function (err) { //previously authenticated
+				t.ifError(err)
 
-				ss.unauthenticate(fakeSessionId, function (err) { //previously authenticated
-					t.notOk(err, 'no error')
-					t.notOk(err && err.notFound, 'no "not found" error')
+				asdb.get(sessionId, function (err, address) {
+					t.ok(err && err.notFound, '\'not found\' error')
+					t.notOk(address)
 
-					asdb.get(fakeSessionId, function (err, time) { //make sure unauth worked
-						t.ok(err, 'error')
-						t.ok(err && err.notFound, '"not found" error')
-						t.notOk(time, 'no time came back, DONE')
+					sdb.get(sessionId, function (err, time) { // session should stay around
+						t.ifError(err)
+						t.equal(time, now)
+
 						t.end()
 					})
 				})

@@ -3,18 +3,21 @@ var init = require('./helpers/init.js')
 
 test('session creation and continuation', function(t) {
 	t.plan(5)
-	var ss = init(400, 100).sessionState
+	var ss = init(Infinity, 400).sessionState
 
-	ss.createSession(function (err, sid1) {
-		t.notOk(err, err ? err.message : 'successful session creation')
+	ss.createSession(function (err, sessionId) {
+		t.ifError(err)
+
 		setTimeout(function () {
-			ss.sessionExists(sid1, function (err, createdAt) {
-				t.notOk(err, err ? err.message : 'successful session continuation')
+			ss.sessionExists(sessionId, function (err, createdAt) {
+				t.ifError(err)
 				t.ok(createdAt, 'session ID is ok')
+
 				setTimeout(function () {
-					ss.sessionExists(sid1, function (err, createdAt) {
-						t.notOk(err, 'no error')
+					ss.sessionExists(sessionId, function (err, createdAt) {
+						t.ifError(err)
 						t.notOk(createdAt, 'unsuccessful, session id expired')
+
 						t.end()
 					})
 				}, 520)

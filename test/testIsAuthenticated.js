@@ -1,5 +1,28 @@
 var test = require('tape')
 var init = require('./helpers/init.js')
+var aae = require('./helpers/assertAsyncError.js')
+
+test('isAuthenticated() throws asynchronously if no callback is supplied', function (t) {
+	t.plan(2)
+
+	var isAuthed = init().sessionState.isAuthenticated
+	aae(isAuthed, [ 'session id' ], function (asyncErr, syncErr) {
+		t.ok(asyncErr)
+		t.notOk(syncErr)
+		t.end()
+	})
+})
+
+test('isAuthenticated() throws asynchronously if no callback and a bad session id are supplied', function (t) {
+	t.plan(2)
+
+	var isAuthed = init().sessionState.isAuthenticated
+	aae(isAuthed, [ null ], function (asyncErr, syncErr) {
+		t.ok(asyncErr)
+		t.notOk(syncErr)
+		t.end()
+	})
+})
 
 test('isAuthenticated() calls back with a decent error message if a bad session id is passed', function (t) {
 	t.plan(2)

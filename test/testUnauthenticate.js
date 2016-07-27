@@ -15,7 +15,7 @@ test('unauthenticate() calls back with a decent error message if a bad parameter
 
 	init().sessionState.unauthenticate(null, function (err) {
 		t.ok(err)
-		t.ok(/session? id/.test(err.message))
+		t.ok(/session ?id/i.test(err.message))
 		t.end()
 	})
 })

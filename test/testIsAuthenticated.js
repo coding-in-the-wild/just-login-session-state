@@ -1,7 +1,17 @@
 var test = require('tape')
 var init = require('./helpers/init.js')
 
-test('isAuthenticated works as expected', function(t) {
+test('isAuthenticated() calls back with a decent error message if a bad parameter is passed', function (t) {
+	t.plan(2)
+
+	init().sessionState.isAuthenticated(null, function (err) {
+		t.ok(err)
+		t.ok(/session? id/.test(err.message))
+		t.end()
+	})
+})
+
+test('isAuthenticated() works as expected', function(t) {
 
 	var sessionId = 'LOLThisIsAFakeSessionId'
 	var contactAddress = 'example@example.com'
@@ -20,7 +30,7 @@ test('isAuthenticated works as expected', function(t) {
 			ss.isAuthenticated(sessionId, function(err, addr) {
 				t.ifError(err)
 				t.equal(addr, contactAddress, 'got back correct value')
-				
+
 				t.end()
 			})
 		})

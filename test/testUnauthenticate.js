@@ -1,11 +1,21 @@
 var test = require('tape')
 var init = require('./helpers/init.js')
 
-test('unauthenticating a session id that does not exist is ok', function (t) {
+test('unauthenticate() doesn\'t care if the session id doesn\'t exist', function (t) {
 	t.plan(1)
 
 	init().sessionState.unauthenticate('DOES NOT EXIST', function (err) {
 		t.ifError(err)
+		t.end()
+	})
+})
+
+test('unauthenticate() calls back with a decent error message if a bad parameter is passed', function (t) {
+	t.plan(2)
+
+	init().sessionState.unauthenticate(null, function (err) {
+		t.ok(err)
+		t.ok(/session? id/.test(err.message))
 		t.end()
 	})
 })

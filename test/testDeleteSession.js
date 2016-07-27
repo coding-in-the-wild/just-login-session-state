@@ -1,10 +1,20 @@
 var test = require('tape')
 var init = require('./helpers/init.js')
 
-var sessionId = "LOLThisIsAFakeSessionId"
-var now = new Date().getTime().toString()
+test('deleteSession() calls back with a decent error message if a bad parameter is passed', function (t) {
+	t.plan(2)
 
-test('deleteSession works as expected', function(t) {
+	init().sessionState.deleteSession(null, function (err) {
+		t.ok(err)
+		t.ok(/session? id/.test(err.message))
+		t.end()
+	})
+})
+
+test('deleteSession() works as expected', function(t) {
+	var sessionId = 'LOLThisIsAFakeSessionId'
+	var now = new Date().getTime().toString()
+
 	var initialState = init()
 	var ss = initialState.sessionState
 	var sdb = initialState.sessionsDb

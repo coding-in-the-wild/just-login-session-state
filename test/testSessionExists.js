@@ -1,7 +1,7 @@
 var test = require('tape')
 var init = require('./helpers/init.js')
 
-test('sessionExists() calls back with a decent error message if a bad parameter is passed', function (t) {
+test('sessionExists() calls back with a decent error message if a bad session id is passed', function (t) {
 	t.plan(2)
 
 	init().sessionState.sessionExists(null, function (err) {

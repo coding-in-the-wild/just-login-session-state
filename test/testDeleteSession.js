@@ -1,7 +1,17 @@
 var test = require('tape')
 var init = require('./helpers/init.js')
 
-test('deleteSession() calls back with a decent error message if a bad parameter is passed', function (t) {
+test('deleteSession() can be called without a callback', function (t) {
+	t.plan(2)
+	t.doesNotThrow(function () {
+		init().sessionState.deleteSession(null)
+	})
+	t.doesNotThrow(function () {
+		init().sessionState.deleteSession('wheee')
+	})
+})
+
+test('deleteSession() calls back with a decent error message if a bad session id is passed', function (t) {
 	t.plan(2)
 
 	init().sessionState.deleteSession(null, function (err) {
